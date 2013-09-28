@@ -83,7 +83,7 @@ function sync_transfer(file,to_path,user_key,share_id){
 }
 
 if($('#barSuperTransfer').length===0){
-    $('#barAllCmdTransfer').before('<a class="new-sbtn" hidefocus="true" href="javascript:;" id="barSuperTransfer" ><em class="icon-share-save"></em><b>超级转存</b></a>')
+    $('#barAllCmdTransfer').before('<a class="new-sbtn" hidefocus="true" href="javascript:;" id="barSuperTransfer" ><em class="icon-share-save"></em><b>转存助手</b></a>')
 }
 
 $('#barSuperTransfer').click(function(event){
