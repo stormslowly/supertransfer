@@ -4,6 +4,8 @@
 // @version    0.1
 // @description  绕开百度云盘的转存文件/文件夹100的数目限制
 // @match      http://pan.baidu.com/*
+// @match       http://pan.baidu.com/share/*
+// @match       http://yun.baidu.com/share/*
 // @updateURL   https://userscripts.org/scripts/source/178760.meta.js
 // @downloadURL https://userscripts.org/scripts/source/178760.user.js
 // @copyright  2012+, Superfei stormslowly@gmail.com
@@ -22,11 +24,11 @@ function stick_notice(message){
 function async_transfer(files,to_path,user_key,share_id,update){
     var ep = new EventProxy();
     var url_base = "/share/transfer?channel=chunlei&clienttype=0&web=1";
-    
+
     var post_url = disk.api.RestAPI.normalize(
-        url_base  + 
-        "&from=" + encodeURIComponent(user_key) + 
-        "&shareid="+share_id, 
+        url_base  +
+        "&from=" + encodeURIComponent(user_key) +
+        "&shareid="+share_id,
         FileUtils.bdstoken);
     var update_func;
 
@@ -35,8 +37,8 @@ function async_transfer(files,to_path,user_key,share_id,update){
     }else{
         update_func = update;
     }
-    
-    
+
+
     ep.after('transfered', files.length, function (list) {
         update_func();
     });
@@ -45,7 +47,7 @@ function async_transfer(files,to_path,user_key,share_id,update){
         console.log(message);
         update_func();
     }
-    
+
     for (var i = 0; i < files.length; i++) {
         console.log(files[i].path,to_path,user_key,share_id);
         $.ajax({
@@ -64,11 +66,11 @@ function async_transfer(files,to_path,user_key,share_id,update){
 function sync_transfer(file,to_path,user_key,share_id){
     var url_base = "/share/transfer?channel=chunlei&clienttype=0&web=1";
     console.log(file.path,to_path,user_key,share_id);
-    
+
     var post_url = disk.api.RestAPI.normalize(
-        url_base  + 
-        "&from=" + encodeURIComponent(user_key) + 
-        "&shareid="+share_id, 
+        url_base  +
+        "&from=" + encodeURIComponent(user_key) +
+        "&shareid="+share_id,
         FileUtils.bdstoken);
     console.log(post_url);
     $.ajax({
@@ -82,7 +84,7 @@ function sync_transfer(file,to_path,user_key,share_id){
         timeout: 100000,
         success: function(message) {
             console.log(message);
-        } 
+        }
     });
 }
 
@@ -91,25 +93,25 @@ if($('#barSuperTransfer').length===0){
 }
 
 $('#barSuperTransfer').click(function(event){
-    
+
     var file_list = FileUtils.getListViewCheckedItems();
     if(file_list.length === 0){
         flash_notice("请选择需要转存的文件");
         return ;
     }
-    
+
     var user_key = FileUtils.sysUK;
     if(user_key ===null){
         flash_notice("无法获得用户信息");
         return;
     }
-    
+
     var share_id = FileUtils.share_id;
     if(share_id ===null){
         flash_notice("无法获得共享资源信息");
         return;
     }
-    
+
     if (!FileUtils._mMoveSaveDialog) {
         FileUtils._mMoveSaveDialog = new disk.ui.MoveSaveDialog();
     }
@@ -132,19 +134,19 @@ $('#barSuperTransfer').click(function(event){
 
         }
         async_transfer(file_list,selected_path,user_key,share_id,update);
-        
+
         /*
-         *  the sync style way 
+         *  the sync style way
             for(var i=0;i<l;i+=1 ){
             console.log(i);
             sync_transfer(file_list[i],selected_path,user_key,share_id);
-            
+
             message = "正在努力转存 " + (i+1) +"/" +l;
             notice.setMessage(disk.ui.Toast.MODE_LOADING,message);
         }
         */
     };
     FileUtils._mMoveSaveDialog.setVisible(true);
-    
-    
+
+
 });
